@@ -12,6 +12,7 @@ def upload(local, remote, fn):
         session = boto3.Session(
             aws_access_key_id=data['aws_access_key_id'],
             aws_secret_access_key=data['aws_secret_access_key'],
+            region_name=data["region_name"]
         )
 
         client = session.client(service_name='s3')
