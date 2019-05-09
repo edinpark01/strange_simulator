@@ -1,0 +1,5 @@
+*venv/
+*.DS_Store
+*.idea/
+*sample_data/
+*aws_info.json
