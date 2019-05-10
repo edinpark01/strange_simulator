@@ -37,6 +37,6 @@ for link in "${links[@]}"; do
     (( i++ ))
 done
 
-python3 -m venv /simulator/venv source /simulator/venv/bin/activate
+sudo python3 -m venv /simulator/venv && source /simulator/venv/bin/activate
 pip install boto3
 python /simulator/simulator.py ${ec2_region}
