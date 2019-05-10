@@ -3,13 +3,14 @@ import os
 import boto3
 import time
 import sys
+from botocore.exceptions import ClientError
 
 
 def get_arguments():
     # TODO: Write UnitTest
     # TODO: Write DocStr
+    # TODO: Read https://blog.sicara.com/perfect-python-command-line-interfaces-7d5d4efad6a2
     if len(sys.argv) is not 5:
-        print("EXCEPTION:\tError while reading arguments | expected 3")
         return None
     else:
         return {
@@ -25,38 +26,25 @@ def upload(ak, sk, rn, bk, lp, fn):
     TODO: Write doc string
     TODO: Write UnitTest
     """
-    error = False
-    elapsed_time = -1
-    try:
-        session = boto3.Session(
+
+    try:  # TODO: One try and multiple exceptions | READ https://botocore.amazonaws.com/v1/documentation/api/latest/client_upgrades.html#error-handling
+        print("INFO:\t\tFile: {}\t\tUploading...".format(fn))
+
+        client = boto3.Session(
             aws_access_key_id=ak,
             aws_secret_access_key=sk,
             region_name=rn
-        )
-    except:
-        error = True
-        print("EXCEPTION:\tError while initializing Session")
-        print("\t\t\tRegion => {}".format(rn))
+        ).client(service_name='s3')
 
-    try:
-        client = session.client(service_name='s3')
-    except:
-        error = True
-        print("EXCEPTION:\tError while initializing client")
-
-    try:
-        print("INFO:\t\tFile: {}\t\tUploading...".format(fn))
         start = time.time()
-        client.upload_file(lp, bk, fn)
+        # client.upload_file(lp, bk, fn)
         elapsed_time = time.time() - start
-    except:
-        error = True
-        print("EXCEPTION:\tError while uploading file: {}".format(fn))
-        print("\t\t=> Bucket: {}".format(bk))
 
-    if not error:
-        millisec = int(round(elapsed_time * 1000))
-        print("INFO:\t\tFile: {}\t\tUpload Time: {} milliseconds".format(fn, millisec))
+    except ClientError as e:
+        raise e
+    else:
+        milli_secs = int(round(elapsed_time * 1000))
+        print("INFO:\t\tFile: {}\t\tUpload Time: {} milliseconds".format(fn, milli_secs))
 
 
 def run(data: dict):
@@ -89,11 +77,9 @@ def run(data: dict):
 
 
 if __name__ == "__main__":
-    """
-    TODO: Write doc string
-    TODO: Write UnitTest
-    """
     args = get_arguments()
 
     if args is not None:
         run(args)
+    else:
+        print("EXCEPTION:\tError while reading arguments | expected 4")
