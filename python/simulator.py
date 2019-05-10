@@ -21,6 +21,10 @@ def get_arguments():
 
 
 def upload(ak, sk, rn, bk, lp, fn):
+    """
+    TODO: Write doc string
+    TODO: Write UnitTest
+    """
     error = False
     elapsed_time = -1
     try:
@@ -85,6 +89,10 @@ def run(data: dict):
 
 
 if __name__ == "__main__":
+    """
+    TODO: Write doc string
+    TODO: Write UnitTest
+    """
     args = get_arguments()
 
     if args is not None:
