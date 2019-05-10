@@ -21,7 +21,7 @@ def get_arguments():
         }
 
 
-def upload(ak, sk, rn, bk, lp, fn):
+def aws_test(ak, sk, rn, bk, lp, fn):
     """
     TODO: Write doc string
     TODO: Write UnitTest
@@ -47,6 +47,10 @@ def upload(ak, sk, rn, bk, lp, fn):
         print("INFO:\t\tFile: {}\t\tUpload Time: {} milliseconds".format(fn, milli_secs))
 
 
+def cohesity_test():
+    pass
+
+
 def run(data: dict):
     """
     TODO: Write doc string
@@ -64,7 +68,7 @@ def run(data: dict):
 
             for file_name in files:
                 threading.Thread(
-                    target=upload,
+                    target=aws_test,
                     name=file_name,
                     args=(
                         data['access_key'],
