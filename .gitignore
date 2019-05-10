@@ -3,3 +3,9 @@
 *.idea/
 *sample_data/
 *aws_info.json
+*.tfvars
+*mykey*
+*.tfstate.backup
+*.tfstate
+*.terraform/
+*credentials/
