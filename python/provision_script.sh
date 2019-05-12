@@ -3,7 +3,7 @@
 access_key=$1
 secret_key=$2
 region=$3
-bkt_name=$4
+bucket_name=$4
 
 sudo yum install -y wget python3
 
@@ -42,4 +42,4 @@ done
 
 sudo python3 -m venv /simulator/venv && source /simulator/venv/bin/activate
 pip install boto3
-python /simulator/simulator.py access_key secret_key region bkt_name
+python /simulator/simulator.py access_key secret_key region bucket_name
