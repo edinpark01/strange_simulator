@@ -9,3 +9,4 @@
 *.tfstate
 *.terraform/
 *credentials/
+*results.csv
