@@ -3,7 +3,18 @@ import os
 import boto3
 import time
 import sys
+import csv
 from botocore.exceptions import ClientError
+
+
+def create_report():
+    fields = ['s3-region', 'ec2-region', 'file', 'upload-time']
+    file_name = "results.csv"
+
+    if not os.path.isfile(file_name):
+        csv_file = open(file_name, "w")
+        writer = csv.DictWriter(csv_file, fieldnames=fields)
+        writer.writeheader()
 
 
 def get_arguments():
@@ -40,11 +51,24 @@ def aws_test(ak, sk, rn, bk, lp, fn):
         # client.upload_file(lp, bk, fn)
         elapsed_time = time.time() - start
 
+        upload_time = int(round(elapsed_time * 1000))
+        start_time = int(round(start * 1000))
+        print("INFO:\t\tFile: {}\t\tUpload Time: {} milliseconds\t\tStart Time: {}".format(fn, upload_time, start_time))
+
+        data = [{
+            "s3-region": rn,
+            "ec2-region": "us-east-1",  # TODO: Pass EC2 region
+            "file": fn,
+            "upload-time": upload_time
+        }]
+
+        with open("results.csv", 'a') as csvFile:
+            writer = csv.DictWriter(csvFile, fieldnames=['s3-region', 'ec2-region', 'file', 'upload-time'])
+            writer.writerows(data)
     except ClientError as e:
         raise e
-    else:
-        milli_secs = int(round(elapsed_time * 1000))
-        print("INFO:\t\tFile: {}\t\tUpload Time: {} milliseconds".format(fn, milli_secs))
+    except FileNotFoundError as fnf_error:
+        raise fnf_error
 
 
 def cohesity_test():
@@ -59,7 +83,7 @@ def run(data: dict):
     sample_dir = "./sample_data"
 
     if not os.path.isdir(sample_dir):
-        print("EXCEPTION:\t\tSample Data directory does not exist")
+        raise Exception("EXCEPTION:\t\tSample Data directory does not exist")
     else:
         for root, dirs, files in os.walk(sample_dir):
 
@@ -70,7 +94,7 @@ def run(data: dict):
                 threading.Thread(
                     target=aws_test,
                     name=file_name,
-                    args=(
+                    args=(  # TODO: ADD EC2 region info
                         data['access_key'],
                         data['secret_key'],
                         data['region'],
@@ -84,6 +108,7 @@ if __name__ == "__main__":
     args = get_arguments()
 
     if args is not None:
+        create_report()
         run(args)
     else:
-        print("EXCEPTION:\tError while reading arguments | expected 4")
+        raise Exception("EXCEPTION:\tError while reading arguments | expected 4")
