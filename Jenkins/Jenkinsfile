@@ -8,7 +8,7 @@ pipeline {
 
     stages {
         stage('Ensure Terraform Installation') {
-            steps { sh ‘terraform — version' }
+            steps { sh 'terraform --version' }
         }
 
         stage('Provision infrastructure') {
