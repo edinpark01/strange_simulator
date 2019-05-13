@@ -18,9 +18,11 @@ def create_report():
 
 
 def get_arguments():
-    # TODO: Write UnitTest
-    # TODO: Write DocStr
-    # TODO: Read https://blog.sicara.com/perfect-python-command-line-interfaces-7d5d4efad6a2
+    """
+    TODO: Write UnitTest
+    TODO: Write DocStr
+    TODO: Read https://blog.sicara.com/perfect-python-command-line-interfaces-7d5d4efad6a2
+    """
     if len(sys.argv) is not 5:
         return None
     else:
@@ -80,15 +82,16 @@ def run(data: dict):
     TODO: Write doc string
     TODO: Write UnitTest
     """
-    sample_dir = "./sample_data"
+    sample_dir = "sample_data"
 
     if not os.path.isdir(sample_dir):
-        raise Exception("EXCEPTION:\t\tSample Data directory does not exist")
+        exception = "Sample Data directory does not exist | {}".format(sample_dir)
+        raise Exception(exception)
     else:
         for root, dirs, files in os.walk(sample_dir):
 
             if len(files) == 0:
-                print("EXCEPTION:\t\tCould not read any files")
+                raise Exception("Could not read any files")
 
             for file_name in files:
                 threading.Thread(
@@ -111,4 +114,4 @@ if __name__ == "__main__":
         create_report()
         run(args)
     else:
-        raise Exception("EXCEPTION:\tError while reading arguments | expected 4")
+        raise Exception("Error while reading arguments | Expected 4")
