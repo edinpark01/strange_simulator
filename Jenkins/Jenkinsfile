@@ -10,7 +10,7 @@ pipeline {
         stage('Generate Key-Value Pair') {
             steps {
                 script {
-                    if ( !fileExists('mykey') ) {
+                    if ( !fileExists('./infrastructure/mykey') ) {
                         sh 'ssh-keygen -f ./infrastructure/mykey'
                     } else {
                         echo 'Key-pair files already generated!'
