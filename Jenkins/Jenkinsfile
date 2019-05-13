@@ -4,8 +4,8 @@ pipeline {
     environment {
         tfHome = tool name: 'terraform'
         PATH = "${tfHome}:${PATH}"
-        TF_VAR_bucket_name = ${BUCKET_NAME}
-        TF_VAR_bucket_region = ${BUCKET_REGION}
+        TF_VAR_bucket_name = "${BUCKET_NAME}"
+        TF_VAR_bucket_region = "${BUCKET_REGION}"
     }
 
     stages {
