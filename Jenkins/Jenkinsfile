@@ -6,6 +6,7 @@ pipeline {
         PATH = "${tfHome}:${PATH}"
         TF_VAR_bucket_name = "${BUCKET_NAME}"
         TF_VAR_bucket_region = "${BUCKET_REGION}"
+        TF_VAR_instance_region = "${REGION}"
     }
 
     stages {
@@ -20,8 +21,7 @@ pipeline {
                     sh '''
                         terraform plan --out=plan \
                         -var 'access_key=${ACCESS_KEY}' \
-                        -var 'secret_key=${SECRET_KEY}' \
-                        -var 'region=${REGION}'
+                        -var 'secret_key=${SECRET_KEY}'
                     '''
                     // sh 'terraform destroy -auto-approve'
                     // sh 'terraform apply plan'
