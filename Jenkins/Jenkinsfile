@@ -21,7 +21,7 @@ pipeline {
                         terraform plan --out=plan \
                         -var 'access_key=${ACCESS_KEY}' \
                         -var 'secret_key=${SECRET_KEY}' \
-                        -var 'region=${REGION} \
+                        -var 'region=${REGION}'
                     '''
                     // sh 'terraform destroy -auto-approve'
                     // sh 'terraform apply plan'
