@@ -20,14 +20,10 @@ pipeline {
         }
 
         stage('Ensure Terraform Installation') {
-            steps {
-                sh 'terraform --version'
-                sh 'which terraform'
-                sh 'echo ${tfHome}'
-            }
+            steps { sh 'terraform --version' }
         }
 
-        stage('Provision infrastructure') {
+        stage('Terraform | Plan & Apply') {
             steps {
                 dir('infrastructure') {
                     sh 'terraform init'
@@ -39,10 +35,23 @@ pipeline {
                          -var bucket_name=${BUCKET_NAME} \
                          -var bucket_region=${BUCKET_REGION}
                     '''
-                    // sh 'terraform destroy -auto-approve'
                     sh 'terraform apply plan'
                 }
             }
+        }
+
+        stage('Run Simulator') {
+            steps {
+                sh '''
+                    ssh -i ./infrastructure/mykey \
+                        ec2-user@$(terraform output instance-public-ip) \
+                        '/simulator/run_simulator.sh ${ACCESS_KEY} ${SECRET_KEY} ${REGION} ${BUCKET_NAME}'
+                '''
+            }
+        }
+
+        stage('Terraform | Destroy') {
+            steps { sh 'terraform destroy -auto-approve' }
         }
     }
 }
