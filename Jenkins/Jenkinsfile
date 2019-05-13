@@ -42,11 +42,13 @@ pipeline {
 
         stage('Run Simulator') {
             steps {
-                sh '''
-                    ssh -i ./infrastructure/mykey \
-                        ec2-user@$(terraform output instance-public-ip) \
-                        '/simulator/run_simulator.sh ${ACCESS_KEY} ${SECRET_KEY} ${REGION} ${BUCKET_NAME}'
-                '''
+                dir('infrastructure') {
+                    sh '''
+                        ssh -i mykey ec2-user@$(terraform output instance-public-ip) \
+                            '/simulator/run_simulator.sh ${ACCESS_KEY} ${SECRET_KEY} ${REGION} ${BUCKET_NAME}'
+                    '''
+                }
+
             }
         }
 
