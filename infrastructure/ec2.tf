@@ -37,7 +37,6 @@ resource "aws_instance" "EC2" {
 }
 
 resource "aws_key_pair" "terraform-key" {
-  # TODO: Generate key in jenkins pipeline
   key_name    = "mykey"
   public_key  = "${file("${path.module}/mykey.pub")}"
 }
