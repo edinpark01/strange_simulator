@@ -12,15 +12,10 @@ resource "aws_instance" "EC2" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo mkdir -p --mode=777 /home/ec2-user/.aws",
       "sudo mkdir -p --mode=777 /simulator"
     ]
   }
 
-  provisioner "file" {
-    source      = "credentials/"
-    destination = "/home/ec2-user/.aws"
-  }
 
   provisioner "file" {
     source      = "../python/"
