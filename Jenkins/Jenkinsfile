@@ -11,7 +11,7 @@ pipeline {
 
     stages {
         stage('Generate Key-Value Pair') {
-            steps { sh 'ssh-keygen -f mykey' }
+            steps { sh 'ssh-keygen -f ./infrastructure/mykey' }
         }
 
         stage('Ensure Terraform Installation') {
