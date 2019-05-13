@@ -1,9 +1,43 @@
 pipeline {
     agent any
+
+    environment {
+        tfHome = tool name: 'terraform'
+        PATH = "${tfHome}:${PATH}"
+    }
+
     stages {
-        stage('Example') {
+        stage('Generate Key-Value Pair') {
             steps {
-                sh "printenv"
+                script {
+                    if ( !fileExists('mykey') ) {
+                        sh 'ssh-keygen -f ./infrastructure/mykey'
+                    } else {
+                        echo 'Key-pair files already generated!'
+                    }
+                }
+            }
+        }
+
+        stage('Ensure Terraform Installation') {
+            steps { sh 'terraform --version' }
+        }
+
+        stage('Provision infrastructure') {
+            steps {
+                dir('infrastructure') {
+                    sh 'terraform init'
+                    sh '''
+                    sudo terraform plan --out=plan \
+                         -var access_key=${ACCESS_KEY} \
+                         -var secre_key=${SECRET_KEY} \
+                         -var instance_region=${REGION} \
+                         -var bucket_name=${BUCKET_NAME} \
+                         -var bucket_region=${BUCKET_REGION}
+                    '''
+                    // sh 'terraform destroy -auto-approve'
+                    sh 'terraform apply plan'
+                }
             }
         }
     }
