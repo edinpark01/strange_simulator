@@ -16,7 +16,6 @@ resource "aws_instance" "EC2" {
     ]
   }
 
-
   provisioner "file" {
     source      = "../python/"
     destination = "/simulator"
