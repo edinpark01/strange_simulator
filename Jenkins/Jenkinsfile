@@ -47,7 +47,7 @@ pipeline {
                     sh '''
                         pwd
                         ls -al
-                        ssh -i mykey ec2-user@$(terraform output instance-public-ip) \
+                        sudo ssh -i mykey ec2-user@$(terraform output instance-public-ip) \
                             "/simulator/run_simulator.sh ${ACCESS_KEY} ${SECRET_KEY} ${REGION} ${BUCKET_NAME}"
                     '''
                 }
