@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-access_key=$1
-secret_key=$2
-region=$3
-bucket_name=$4
-
 sudo yum install -y wget python3
 
 mkdir -p --mode=777 /simulator/sample_data
@@ -42,4 +37,3 @@ done
 sudo python3 -m venv /simulator/venv && source /simulator/venv/bin/activate
 pip install boto3
 deactivate
-python
