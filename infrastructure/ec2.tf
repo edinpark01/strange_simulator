@@ -24,7 +24,7 @@ resource "aws_instance" "EC2" {
   provisioner "remote-exec" {
     inline = [
       "sudo chmod -R 777 /simulator/",
-      "sudo /simulator/provision_script.sh"∑
+      "sudo /simulator/provision_script.sh"
     ]
   }
 
