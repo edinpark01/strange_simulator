@@ -30,7 +30,7 @@ links[0]='http://ipv4.download.thinkbroadband.com/20MB.zip'
 
 i=0
 for link in "${links[@]}"; do
-    sudo wget -O '/simulator/sample_data/'${sizes[${i}]} ${link}
+    sudo wget --tries=2 -O '/simulator/sample_data/'${sizes[${i}]} ${link}
     (( i++ ))
 done
 
