@@ -24,10 +24,10 @@ resource "aws_instance" "EC2" {
   provisioner "remote-exec" {
     inline = [
       "sudo chmod -R 777 /simulator/",
-      'echo "ACCESS_KEY=${var.access_key}" >> /etc/environment',
-      'echo "SECRET_KEY=${var.secret_key}" >> /etc/environment',
-      'echo "REGION=${var.instance_region}" >> /etc/environment',
-      'echo "BUCKET_NAME=${var.bucket_name}" >> /etc/environment',
+      "echo 'ACCESS_KEY=${var.access_key}'   >> /etc/environment",
+      "echo 'SECRET_KEY=${var.secret_key}'   >> /etc/environment",
+      "echo 'REGION=${var.instance_region}'  >> /etc/environment",
+      "echo 'BUCKET_NAME=${var.bucket_name}' >> /etc/environment",
       "sudo /simulator/provision_script.sh"
     ]
   }
