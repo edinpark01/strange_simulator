@@ -32,6 +32,7 @@ pipeline {
         stage('Terraform | Plan & Apply') {
             steps {
                 dir('infrastructure') {
+                    sh 'printenv'
                     sh 'terraform init'
                     sh 'sudo terraform plan --out=plan'
                     sh 'terraform apply plan'
