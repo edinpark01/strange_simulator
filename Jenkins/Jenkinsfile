@@ -34,7 +34,7 @@ pipeline {
                 dir('infrastructure') {
                     sh 'printenv'
                     sh 'terraform init'
-                    sh 'sudo terraform plan --out=plan'
+                    sh 'terraform plan --out=plan'
                     sh 'terraform apply plan'
                 }
             }
