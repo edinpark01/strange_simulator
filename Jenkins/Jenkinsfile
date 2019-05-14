@@ -30,7 +30,7 @@ pipeline {
                     sh '''
                     sudo terraform plan --out=plan \
                          -var access_key=${ACCESS_KEY} \
-                         -var secre_key=${SECRET_KEY} \
+                         -var secret_key=${SECRET_KEY} \
                          -var instance_region=${REGION} \
                          -var bucket_name=${BUCKET_NAME} \
                          -var bucket_region=${BUCKET_REGION}
