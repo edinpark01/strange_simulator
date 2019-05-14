@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        TF_VAR_access_key      = "${ACCESS_KEY}"
-        TF_VAR_secret_key      = "${SECRET_KEY}"
-        TF_VAR_instance_region = "${REGION}"
-        TF_VAR_bucket_name     = "${BUCKET_NAME}"
-        TF_VAR_bucket_region   = "${BUCKET_REGION}"
+        TF_VAR_access_key="${ACCESS_KEY}"
+        TF_VAR_secret_key="${SECRET_KEY}"
+        TF_VAR_instance_region="${REGION}"
+        TF_VAR_bucket_name="${BUCKET_NAME}"
+        TF_VAR_bucket_region="${BUCKET_REGION}"
 
         tfHome = tool name: 'terraform'
         PATH   = "${tfHome}:${PATH}"
@@ -25,7 +25,7 @@ pipeline {
             }
         }
 
-        stage('Ensure Terraform Installation') {
+        stage('Terraform | Check Installation') {
             steps { sh 'terraform --version' }
         }
 
