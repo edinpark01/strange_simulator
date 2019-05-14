@@ -1,6 +1,6 @@
 provider "aws" {
   access_key = "${var.access_key}"
-  secret_key = "${var.secre_key}"
+  secret_key = "${var.secret_key}"
   region     = "${var.instance_region}"
 }
 
@@ -23,9 +23,13 @@ resource "aws_instance" "EC2" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod 777 /simulator/provision_script.sh",
-      "sudo chmod 777 /simulator/simulator.py",
-      "sudo /simulator/provision_script.sh ${var.access_key} ${var.secre_key} ${var.instance_region} ${var.bucket_name}"
+      "sudo chmod -R 777 /simulator/",
+      "echo \"ACCESS_KEY=${var.access_key}\n\n$(cat ${var.sim_path})\" > ${var.sim_path}",
+      "echo \"SECRET_KEY=${var.secret_key}\n$(cat ${var.sim_path})\"   > ${var.sim_path}",
+      "echo \"REGION=${var.instance_region}\n$(cat ${var.sim_path})\"  > ${var.sim_path}",
+      "echo \"BUCKET_NAME=${var.bucket_name}\n$(cat ${var.sim_path})\" > ${var.sim_path}",
+      "echo \"#!/bin/bash\n$(cat ${var.sim_path})\"                    > ${var.sim_path}",
+      "sudo /simulator/provision_script.sh"
     ]
   }
 

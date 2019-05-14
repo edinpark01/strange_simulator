@@ -82,7 +82,7 @@ def run(data: dict):
     TODO: Write doc string
     TODO: Write UnitTest
     """
-    sample_dir = "sample_data"
+    sample_dir = "/simulator/sample_data"
 
     if not os.path.isdir(sample_dir):
         exception = "Sample Data directory does not exist | {}".format(sample_dir)
