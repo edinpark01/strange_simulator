@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     environment {
-        tf_VAR_access_key = ${ACCESS_KEY}
-        tf_VAR_secret_key = ${SECRET_KEY}
-        tf_VAR_instance_region = ${REGION}
-        tf_VAR_bucket_name = ${BUCKET_NAME}
-        tf_VAR_bucket_region = ${BUCKET_REGION}
+        tf_VAR_access_key      = "${ACCESS_KEY}"
+        tf_VAR_secret_key      = "${SECRET_KEY}"
+        tf_VAR_instance_region = "${REGION}"
+        tf_VAR_bucket_name     = "${BUCKET_NAME}"
+        tf_VAR_bucket_region   = "${BUCKET_REGION}"
 
         tfHome = tool name: 'terraform'
-        PATH = "${tfHome}:${PATH}"
+        PATH   = "${tfHome}:${PATH}"
     }
 
     stages {
