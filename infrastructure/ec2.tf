@@ -24,10 +24,10 @@ resource "aws_instance" "EC2" {
   provisioner "remote-exec" {
     inline = [
       "sudo chmod -R 777 /simulator/",
-      "sudo echo \"ACCESS_KEY=${var.access_key}\"   >> /etc/profile.d/aws_env.sh",
-      "sudo echo \"SECRET_KEY=${var.secret_key}\"   >> /etc/profile.d/aws_env.sh",
-      "sudo echo \"REGION=${var.instance_region}\"  >> /etc/profile.d/aws_env.sh",
-      "sudo echo \"BUCKET_NAME=${var.bucket_name}\" >> /etc/profile.d/aws_env.sh",
+      "sudo echo \"export ACCESS_KEY=${var.access_key}\"   >> /etc/profile.d/aws_env.sh",
+      "sudo echo \"export SECRET_KEY=${var.secret_key}\"   >> /etc/profile.d/aws_env.sh",
+      "sudo echo \"export REGION=${var.instance_region}\"  >> /etc/profile.d/aws_env.sh",
+      "sudo echo \"export BUCKET_NAME=${var.bucket_name}\" >> /etc/profile.d/aws_env.sh",
       "/simulator/provision_script.sh"
     ]
   }
