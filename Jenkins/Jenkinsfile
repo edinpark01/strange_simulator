@@ -43,15 +43,12 @@ pipeline {
         stage('Run Simulator') {
             steps {
                 dir('infrastructure') {
-                    sleep(time:60,unit:"SECONDS")
                     sh '''
-                        pwd
-                        ls -al
-                        sudo ssh -i mykey ec2-user@$(terraform output instance-public-ip) \
+                        ssh -o "StrictHostKeyChecking=no" \
+                            -i mykey ec2-user@$(terraform output instance-public-ip) \
                             "/simulator/run_simulator.sh ${ACCESS_KEY} ${SECRET_KEY} ${REGION} ${BUCKET_NAME}"
                     '''
                 }
-
             }
         }
 
