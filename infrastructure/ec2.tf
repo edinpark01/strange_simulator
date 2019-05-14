@@ -24,12 +24,12 @@ resource "aws_instance" "EC2" {
   provisioner "remote-exec" {
     inline = [
       "sudo chmod -R 777 /simulator/",
-      "echo \"ACCESS_KEY=${var.access_key}\n\n$(cat ${var.sim_path})\" >> ${var.sim_path}",
-      "echo \"SECRET_KEY=${var.secret_key}\n$(cat ${var.sim_path})\" >> ${var.sim_path}",
-      "echo \"REGION=${var.instance_region}\n$(cat ${var.sim_path})\" >> ${var.sim_path}",
-      "echo \"BUCKET_NAME=${var.bucket_name}\n$(cat ${var.sim_path})\" >> ${var.sim_path}",
-      "echo \"#!/bin/bash\n$(cat ${var.sim_path})\" >> ${var.sim_path}",
-      "/simulator/provision_script.sh"
+      "echo \"ACCESS_KEY=${var.access_key}\n\n$(cat ${var.sim_path})\" > ${var.sim_path}",
+      "echo \"SECRET_KEY=${var.secret_key}\n$(cat ${var.sim_path})\"   > ${var.sim_path}",
+      "echo \"REGION=${var.instance_region}\n$(cat ${var.sim_path})\"  > ${var.sim_path}",
+      "echo \"BUCKET_NAME=${var.bucket_name}\n$(cat ${var.sim_path})\" > ${var.sim_path}",
+      "echo \"#!/bin/bash\n$(cat ${var.sim_path})\"                    > ${var.sim_path}",
+      "sudo /simulator/provision_script.sh"
     ]
   }
 
