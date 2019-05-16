@@ -67,6 +67,39 @@ pipeline {
                         }
                     }
                 }
+                stage("EMC"){
+                    stages {
+                        stage('Sample Stage I') {
+                            steps {
+                                echo 'Generating local directory'
+                            }
+                        }
+                        stage('Sample Stage II') {
+                            steps {
+                                echo 'GOTCHA!'
+                            }
+                        }
+                    }
+                }
+                stage("PURE"){
+                    stages {
+                        stage('Sample Stage I') {
+                            steps {
+                                echo 'Generating local directory'
+                            }
+                        }
+                        stage('Sample Stage II') {
+                            steps {
+                                echo 'GOTCHA!'
+                            }
+                        }
+                        stage('Sample Stage III') {
+                            steps {
+                                echo 'GOTCHA!'
+                            }
+                        }
+                    }
+                }
             }
         }
 
