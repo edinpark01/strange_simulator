@@ -24,7 +24,7 @@ pipeline {
 
         stage("Setup Environment") {
             parallel {
-                stage("AWS") {
+                stage("AWS-Personal") {
                     when { environment name: 'AWS_ENV', value: 'PERSONAL' }
                     stages {
                         stage('Generate Key-Value Pair') {
@@ -49,6 +49,25 @@ pipeline {
                                     sh 'terraform plan --out=plan'
                                     sh 'terraform apply plan'
                                 }
+                            }
+                        }
+                    }
+                }
+                stage("AWS-Enterprise") {
+                    when { environment name: 'AWS_ENV', value: 'ENTERPRISE' }
+                    stages {
+                        stage('Get Temporary API credentials') {
+                            steps {
+                                echo "Run/Test Z's shell script"  // TODO
+                            }
+                        }
+                        stage('Terraform | Check Installation') {
+                            steps { sh 'terraform --version' }
+                        }
+
+                        stage('Terraform | Plan & Apply') {
+                            steps {
+                                echo "Run terraform stuff"
                             }
                         }
                     }
@@ -107,6 +126,7 @@ pipeline {
         stage('Run Simulations') {
             parallel {
                 stage('AWS') {
+                    when { environment name: 'AWS_ENV', value: 'PERSONAL' }
                     stages {
                         stage('Write to S3') {
                             steps {
