@@ -24,10 +24,10 @@ pipeline {
 
         stage("Setup Environment") {
             parallel {
-                stage("AWS-Personal") {
-                    when { environment name: 'AWS_ENV', value: 'PERSONAL' }
+                stage("AWS") {
                     stages {
-                        stage('Generate Key-Value Pair') {
+                        stage("PERSONAL") {
+                            when { environment name: 'AWS_ENV', value: 'PERSONAL' }
                             steps {
                                 script {
                                     if ( !fileExists('./infrastructure/mykey') ) {
@@ -36,41 +36,23 @@ pipeline {
                                         echo 'Key-pair files already generated!'
                                     }
                                 }
-                            }
-                        }
-                        stage('Terraform | Check Installation') {
-                            steps { sh 'terraform --version' }
-                        }
-
-                        stage('Terraform | Plan & Apply') {
-                            steps {
                                 dir('infrastructure') {
                                     sh 'terraform init'
                                     sh 'terraform plan --out=plan'
                                     sh 'terraform apply plan'
                                 }
+
                             }
                         }
-                    }
-                }
-                stage("AWS-Enterprise") {
-                    when { environment name: 'AWS_ENV', value: 'ENTERPRISE' }
-                    stages {
-                        stage('Get Temporary API credentials') {
+                        stage("ENTERPRISE"){
+                            when { environment name: 'AWS_ENV', value: 'ENTERPRISE' }
                             steps {
                                 echo "Run/Test Z's shell script"  // TODO
-                            }
-                        }
-                        stage('Terraform | Check Installation') {
-                            steps { sh 'terraform --version' }
-                        }
-
-                        stage('Terraform | Plan & Apply') {
-                            steps {
                                 echo "Run terraform stuff"
                             }
                         }
                     }
+
                 }
 
                 stage("Cohesity"){
