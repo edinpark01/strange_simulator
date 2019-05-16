@@ -108,18 +108,22 @@ pipeline {
         stage('Run Simulations') {
             parallel {
                 stage('AWS') {
-                    when { environment name: 'AWS_ENV', value: 'PERSONAL' }
-                    stages {
-                        stage('Write to S3') {
-                            steps {
-                                dir('infrastructure') {
-                                    sh '''
+                    stage('PERSONAL') {
+                        when { environment name: 'AWS_ENV', value: 'PERSONAL' }
+                        steps {
+                            dir('infrastructure') {
+                                sh '''
                                         ssh -o "StrictHostKeyChecking=no" \
                                             -i mykey ec2-user@$(terraform output instance-public-ip) \
                                             "/simulator/run_simulator.sh"
                                     '''
-                                }
                             }
+                        }
+                    }
+                    stage('ENTERPRISE'){
+                        when { environment name: 'AWS_ENV', value: 'ENTERPRISE' }
+                        steps {
+                            echo "DO enterprise side stuff"
                         }
                     }
                 }
