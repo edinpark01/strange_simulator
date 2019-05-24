@@ -2,27 +2,60 @@ pipeline {
     agent any
 
     environment {
-        TF_VAR_access_key       ="${ACCESS_KEY}"
-        TF_VAR_secret_key       ="${SECRET_KEY}"
-        TF_VAR_instance_region  ="${REGION}"
-        TF_VAR_bucket_name      ="${BUCKET_NAME}"
-        TF_VAR_bucket_region    ="${BUCKET_REGION}"
+        TF_VAR_access_key       ="${aws_access_key}"
+        TF_VAR_secret_key       ="${aws_secret_key}"
+        TF_VAR_instance_region  ="${instance_region}"
+        TF_VAR_bucket_name      ="${bucket_name}"
+        TF_VAR_bucket_region    ="${bucket_region}"
 
-        tfHome = tool name: 'terraform'
-        PATH   = "${tfHome}:${PATH}"
+        // Proxy Settings
+        HTTP_PROXY  = "http://${proxy_user}:${proxy_pass}@primary-proxy.gslb.intranet.barcapint.com:8080"
+        HTTPS_PROXY = "http://${proxy_user}:${proxy_pass}@primary-proxy.gslb.intranet.barcapint.com:8080"
+        http_proxy  = "http://${proxy_user}:${proxy_pass}@primary-proxy.gslb.intranet.barcapint.com:8080"
+        https_proxy = "http://${proxy_user}:${proxy_pass}@primary-proxy.gslb.intranet.barcapint.com:8080"
     }
 
     stages {
-        stage('Checkout code') {
-            steps {
-                git (
-                    url: 'https://github.com/edinpark01/strange_simulator',
-                    branch: 'master'
-                )
+        stage('Setup Environment') {
+            parallel {
+                stage('Checkout code') {
+                    steps {
+                        sh '''
+                            git config --system http.sslVerify false    
+                            git config --global http.sslVerify false    
+                        '''
+                        git branch: 'master',
+                                credentialsId: 'stash_credentials',
+                                url: 'https://stash.barcapint.com:8443/scm/~tonacobr/strange_simulator.git'
+                    }
+                }
+                stage('apk packages') {
+                    steps {
+                        sh '''
+                            apk update
+                            if [ ! $(which sudo) ]; then apk add sudo; fi
+                            if [ ! $(which wget) ]; then apk add wget; fi
+                            if [ ! $(which python3) ]; then apk add python3; fi
+                            if [ ! $(which terraform) ]; then apk add terraform; fi
+                        '''
+                    }
+                }
             }
         }
 
-        stage("Setup Environment") {
+        stage('Python Setup'){
+            steps {
+                sh '''
+                if [ ! -d venv ]; then python3 -m venv venv; fi
+                source venv/bin/activate
+                pip install --upgrade pip
+                pip install -r python/requirements.txt
+                deactivate'''
+            }
+
+        }
+
+        stage("Build") {
             parallel {
                 stage("AWS") {
                     stages {
@@ -41,7 +74,6 @@ pipeline {
                                     sh 'terraform plan --out=plan'
                                     sh 'terraform apply plan'
                                 }
-
                             }
                         }
                         stage("ENTERPRISE"){
@@ -52,19 +84,17 @@ pipeline {
                             }
                         }
                     }
-
+                    post {
+                        unsuccessful {
+                            sh 'terraform destroy --auto-approve'
+                        }
+                    }
                 }
-
                 stage("Cohesity"){
                     stages {
-                        stage('Sample Stage I') {
+                        stage('Download/Generate Sample Files') {
                             steps {
-                                echo 'Generating local directory'
-                            }
-                        }
-                        stage('Sample Stage II') {
-                            steps {
-                                echo 'GOTCHA!'
+                                echo "Placeholder for generate test cases"
                             }
                         }
                     }
@@ -124,15 +154,19 @@ pipeline {
                         stage('ENTERPRISE'){
                             when { environment name: 'AWS_ENV', value: 'ENTERPRISE' }
                             steps {
-                                echo "DO enterprise side stuff"
+                                echo "Do enterprise side stuff"
                             }
                         }
                     }
                 }
                 stage('Cohesity') {
                     stages {
-                        stage('Sample Simulation I') { steps { echo 'Sim I' } }
-                        stage('Sample Simulation II') { steps { echo 'Sim II' } }
+                        stage('Random Files') {
+                            steps {
+                                echo "Cohesity Simulations"
+//                                sh 'bash scripts/run_cohesity.sh'
+                            }
+                        }
                     }
                 }
             }
@@ -151,7 +185,7 @@ pipeline {
                         }
                     }
                 }
-                stage('Cohesity') { steps { echo 'Finalize Cohesity stuff'} }
+                stage('Cohesity') { steps { sh 'rm -rf /tmp/sample_data' } }  // Erase file , get report
             }
         }
     }
