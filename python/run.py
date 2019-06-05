@@ -10,6 +10,10 @@ from enum import Enum
 from botocore.exceptions import ClientError
 from cohesity_wrapper.cohesity import get_s3_keys
 
+import upload_methods.individual_upload
+import upload_methods.concurrent_upload
+import upload_methods.parallel_upload
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class Platform(Enum):
@@ -17,7 +21,7 @@ class Platform(Enum):
     aws = 2
 
 def create_report():
-    fields = ['s3-region', 'ec2-region', 'file', 'upload-time']
+    fields = ['platform', 'simulation', 's3-region', 'ec2-region', 'file', 'upload-time']
     file_name = "results.csv"
 
     if not os.path.isfile(file_name):
@@ -34,6 +38,8 @@ def get_arguments():
     """
     platform = str()
     data = {
+        'platform': None,
+        'simulation': None,
         'bucket_name': None,
         'region': None,
         'access_key': None,
@@ -44,6 +50,7 @@ def get_arguments():
     for index, arg in enumerate(sys.argv):
         if arg in ['--platform', '-p'] and len(sys.argv) > index + 1:
             platform = sys.argv[index + 1]
+            data['platform'] = platform
             del sys.argv[index]
             del sys.argv[index]       
     
@@ -51,8 +58,8 @@ def get_arguments():
         for index, arg in enumerate(sys.argv):
             if arg in ['--bucket-name'] and len(sys.argv) > index + 1:
                 data['bucket_name'] = sys.argv[index + 1]
-                del sys.argv[index]
-                del sys.argv[index]
+            elif arg in ['--simulation'] and len(sys.argv) > index + 1:
+                data['simulation'] = sys.argv[index + 1]
         cohesity_key_dict = get_s3_keys()
         data['access_key'] = cohesity_key_dict["access_key"]
         data['secret_key'] = cohesity_key_dict["secret_key"]
@@ -67,45 +74,9 @@ def get_arguments():
                 data['access_key'] = sys.argv[index + 1]
             elif arg in ['--secret-key'] and len(sys.argv) > index + 1:
                 data['secret_key'] = sys.argv[index + 1]
+            elif arg in ['--simulation'] and len(sys.argv) > index + 1:
+                data['simulation'] = sys.argv[index + 1]
     return data
-
-def test_platform(ak, sk, rn, bk, lp, fn, eu):
-    """
-    TODO: Write doc string
-    TODO: Write UnitTest
-    """
-
-    try:  # TODO: One try and multiple exceptions | READ https://botocore.amazonaws.com/v1/documentation/api/latest/client_upgrades.html#error-handling
-        print("INFO:\t\tFile: {}\t\tUploading...".format(fn))
-
-        client = boto3.Session(
-            aws_access_key_id=ak,
-            aws_secret_access_key=sk,
-            region_name=rn
-        ).client(service_name='s3', endpoint_url=eu, verify=False)
-
-        start = time.time()
-        client.upload_file(lp, bk, fn)
-        elapsed_time = time.time() - start
-
-        upload_time = int(round(elapsed_time * 1000))
-        start_time = int(round(start * 1000))
-        print("INFO:\t\tFile: {}\t\tUpload Time: {} milliseconds\t\tStart Time: {}".format(fn, upload_time, start_time))
-
-        data = [{
-            "s3-region": rn,
-            "ec2-region": "us-east-1",  # TODO: Pass EC2 region
-            "file": fn,
-            "upload-time": upload_time
-        }]
-
-        with open("results.csv", 'a') as csvFile:
-            writer = csv.DictWriter(csvFile, fieldnames=['s3-region', 'ec2-region', 'file', 'upload-time'])
-            writer.writerows(data)
-    except ClientError as e:
-        raise e
-    except FileNotFoundError as fnf_error:
-        raise fnf_error
 
 
 def cohesity_test():
@@ -149,9 +120,11 @@ def run(data: dict):
 
                 for file_name in files:
                     threading.Thread(
-                        target=test_platform,
+                        target=parallel_write(),
                         name=file_name,
                         args=(  # TODO: ADD EC2 region info
+                            data['platform'],
+                            data['simulation'],
                             data['access_key'],
                             data['secret_key'],
                             data['region'],
@@ -165,11 +138,13 @@ def run(data: dict):
 if __name__ == "__main__":
     args = get_arguments()
     print(args)
-    if args is not None:
-        create_report()
-        run(args)
-    else:
-        raise Exception("Error while reading arguments | Expected 4")
+
+
+    # if args is not None:
+    #     create_report()
+    #     run(args)
+    # else:
+    #     raise Exception("Error while reading arguments | Expected 4")
     
     # test_platform(args['access_key'], args['secret_key'], args['region'], args['bucket_name'],
     #               './newtest.txt', 'newtest', args['cluster_url']) 
