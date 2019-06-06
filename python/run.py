@@ -1,4 +1,5 @@
 import urllib3
+import os
 import simulation_methods
 import command_line_args
 
@@ -6,6 +7,8 @@ from cohesity_wrapper.cohesity import get_s3_keys
 
 if __name__ == "__main__":
     configuration = command_line_args.handler.handler()
+
+    os.system("../scripts/generate_test_cases.sh")
 
     if configuration.method == "individual":
         if configuration.communication == "write":

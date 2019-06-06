@@ -75,6 +75,4 @@ def handler():
             elif arg in ['--secret-key'] and len(sys.argv) > index + 1:
                 conf.secret_key = sys.argv[index + 1]
 
-    print("Input Args:", conf)
-
     return conf
