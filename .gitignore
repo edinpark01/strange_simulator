@@ -4,6 +4,7 @@
 *sample_data/
 *aws_info.json
 *.tfvars
+*provision.sh
 *mykey*
 *.tfstate.backup
 *.tfstate

@@ -1,6 +1,6 @@
 import os
 import boto3
-
+import time
 
 def hello():
     """
@@ -29,7 +29,12 @@ def upload_file(local_path: str, remote_path: str, configuration):
             verify=False,
             endpoint_url=configuration.url)
 
+        start = int(round( time.time() * 1000 ))
         s3_client.upload_file(local_path, configuration.bucket_name,
-                              remote_path, Config=threshold)
+                             remote_path, Config=threshold)
+        elaspsed = int(round( time.time() * 1000 )) - start
+
+        print("INFO:\tFilename: {}\tStart time: {}\tUpload time: {}".format(remote_path, start, elaspsed))
+
     except Exception as e:
         raise e
