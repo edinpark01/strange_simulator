@@ -43,7 +43,7 @@ def session_wrapper(conf, file=None):
 
 def upload_file(conf, local_path: str, file: str):
     client, thresh = session_wrapper(conf, file)
-    remote_path = configuration.simulation + "/" + file
+    remote_path = conf.simulation + "/" + file
 
     try:
         start = time.time()
