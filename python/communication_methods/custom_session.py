@@ -28,15 +28,15 @@ def session_wrapper(conf, file=None):
         threshold = TransferConfig(multipart_threshold=size+1)
 
     session = boto3.Session(
-        aws_access_key_id=configuration.access_key,
-        aws_secret_access_key=configuration.secret_key,
-        aws_session_token=configuration.session_key,
-        region_name=configuration.region)
+        aws_access_key_id=conf.access_key,
+        aws_secret_access_key=conf.secret_key,
+        aws_session_token=conf.session_key,
+        region_name=conf.region)
 
     s3_client = session.client(
         service_name='s3',
         verify=False,
-        endpoint_url=configuration.url)
+        endpoint_url=conf.url)
 
     return s3_client, threshold
 
