@@ -47,7 +47,7 @@ def upload_file(conf, local_path: str, file: str):
 
     try:
         start = time.time()
-        s3_client.upload_file(local_path, conf.bucket_name, remote_path, Config=thresh)
+        client.upload_file(local_path, conf.bucket_name, remote_path, Config=thresh)
         end = time.time()
 
         log_results(start, end, remote_path)
