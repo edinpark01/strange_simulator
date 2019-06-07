@@ -69,7 +69,7 @@ def download_file(configuration):
             f = open('/tmp/download/' + content['Key'], 'w').close()
 
             start = time.time()
-            s3_client.download_file(
+            client.download_file(
                 Bucket=configuration.bucket_name,
                 Key=content['Key'],
                 Filename='/tmp/download/' + content['Key'])
