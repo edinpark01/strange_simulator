@@ -1,10 +1,17 @@
 import simulation_methods, command_line_args
+import urllib3
+
+urllib3.disable_warnings()
 
 if __name__ == "__main__":
     configuration = command_line_args.handler.handler()
 
+    print("INFO:\tPlatform: {}\tMethod: {}\tCommunication: {}"
+          "".format(configuration.platform, configuration.method, configuration.communication))
+
     if configuration.method == "individual":
         if configuration.communication == 'write':
+
             simulation_methods.individual.write(configuration)
         elif configuration.communication == 'read':
             simulation_methods.individual.read(configuration)
