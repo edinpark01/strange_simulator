@@ -12,16 +12,17 @@ def write(conf):
         only moves on to the next file in the directory after it has
         finished uploading the current file.
     """
-
     try:
         for root, dirs, files in os.walk(conf.sample_data_path):
             for file_name in files:
                 local = os.path.join(root, file_name)
-                remote = conf.simulation + "/" + file_name
-                communication_methods.custom_session.upload_file(local, remote, conf)
+                communication_methods.custom_session.upload_file(conf, local, file_name)
     except Exception as e:
         raise e
 
 
-def read():
-    pass
+def read(conf):
+    try:
+        communication_methods.custom_session.download_file(conf)
+    except Exception as e:
+        raise e

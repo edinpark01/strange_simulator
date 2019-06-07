@@ -1,19 +1,13 @@
-import os
-import simulation_methods
-import command_line_args
-
-from cohesity_wrapper.cohesity import get_s3_keys
+import simulation_methods, command_line_args
 
 if __name__ == "__main__":
     configuration = command_line_args.handler.handler()
 
     if configuration.method == "individual":
-        if configuration.communication == "write":
-            print("Individual | Write")
+        if configuration.communication == 'write':
             simulation_methods.individual.write(configuration)
-        if configuration.communication == "read":
-            print("Individual | Read")
-            # simulation_methods.individual.read()
+        elif configuration.communication == 'read':
+            simulation_methods.individual.read(configuration)
     elif configuration.method == "concurrent":
         if configuration.communication == "write":
             print("Concurrent | Write")
